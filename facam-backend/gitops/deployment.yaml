@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-emp
+  namespace: backend
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-emp
+  template:
+    metadata:
+      labels:
+        app: backend-emp
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: nodegroup-type
+                    operator: In
+                    values:
+                      - BACKEND
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: backend-emp
+          image: 058475846659.dkr.ecr.ap-northeast-2.amazonaws.com/backend-emp
+          ports:
+            - containerPort: 8080
+#          resources:
+#            requests:
+#              cpu: "30m"
+#              memory: "64Mi"
+#            limits:
+#              cpu: "50m"
+#              memory: "64Mi"

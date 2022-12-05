@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--suppress XmlHighlighting -->
+<config xmlns="http://www.navercorp.com/lucy-xss-servlet">
+	<defenders>
+		<!-- XssPreventer 등록 -->
+		<defender>
+			<name>xssPreventerDefender</name>
+			<class>
+				com.navercorp.lucy.security.xss.servletfilter.defender.XssPreventerDefender
+			</class>
+		</defender>
+
+		<!-- XssSaxFilter 등록 -->
+		<defender>
+			<name>xssSaxFilterDefender</name>
+			<class>
+				com.navercorp.lucy.security.xss.servletfilter.defender.XssSaxFilterDefender
+			</class>
+			<init-param>
+				<param-value>lucy-xss-sax.xml</param-value>
+				<param-value>false</param-value>
+			</init-param>
+		</defender>
+
+		<!-- XssFilter 등록 -->
+		<defender>
+			<name>xssFilterDefender</name>
+			<class>
+				com.navercorp.lucy.security.xss.servletfilter.defender.XssFilterDefender
+			</class>
+			<init-param>
+				<param-value>lucy-xss.xml</param-value>
+				<param-value>false</param-value>
+			</init-param>
+		</defender>
+	</defenders>
+
+	<default>
+		<defender>xssPreventerDefender</defender>
+	</default>
+
+	<url-rule-set>
+		<url-rule>
+			<url disable="true">/v2/api-docs**</url>
+		</url-rule>
+
+		<url-rule>
+			<url disable="true">/sys/checkHealth</url>
+		</url-rule>
+	</url-rule-set>
+</config>

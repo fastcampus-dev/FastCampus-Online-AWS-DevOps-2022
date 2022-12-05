@@ -1,0 +1,9 @@
+
+- include: copy_target_jar.yml
+  become: true
+
+- include: kill_java.yml
+  become: true
+
+- include: run_java.yml
+  become: true

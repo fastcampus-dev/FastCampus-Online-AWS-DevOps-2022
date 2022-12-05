@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.4.0</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <groupId>com.kimdragon</groupId>
+    <artifactId>employee-management-backend</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>employee-management-backend</name>
+    <description>Demo project for Spring Boot</description>
+
+    <properties>
+        <java.version>11</java.version>
+<!--        <jib.maven-plugin-version>1.6.1</jib.maven-plugin-version>-->
+<!--        <time-zone>Asia/Seoul</time-zone>-->
+<!--        <digest>sha256:8671f949e6f7d28d4ffcc574e3b0ce1f4810aca2c72769de5ce7d6e9ffbe7a79</digest>-->
+<!--        <account>058475846659</account>-->
+<!--        <ecr-image>backend-base</ecr-image>-->
+
+    </properties>
+
+<!--    <profiles>-->
+<!--        <profile>-->
+<!--            <id>local</id>-->
+<!--            <activation>-->
+<!--                <activeByDefault>true</activeByDefault>-->
+<!--            </activation>-->
+<!--        </profile>-->
+
+<!--        <profile>-->
+<!--            <id>prod</id>-->
+<!--            <properties>-->
+<!--                <account>058475846659</account>-->
+<!--                <ecr-image>backend-base</ecr-image>-->
+<!--            </properties>-->
+<!--        </profile>-->
+
+<!--    </profiles>-->
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>6.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sndyuk</groupId>
+            <artifactId>logback-more-appenders</artifactId>
+            <version>1.8.3</version>
+        </dependency>
+
+        <!-- [Optional] If you use The Fluentd appender, You need to add the dependency(fluent-logger). -->
+        <dependency>
+            <groupId>org.fluentd</groupId>
+            <artifactId>fluent-logger</artifactId>
+            <version>0.3.4</version>
+        </dependency>
+
+        <!-- [Optional] If you use The Fluency appender, You need to add the dependency(fluency). -->
+        <dependency>
+            <groupId>org.komamitsu</groupId>
+            <artifactId>fluency-core</artifactId>
+            <version>2.4.1</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.komamitsu</groupId>
+            <artifactId>fluency-fluentd</artifactId>
+            <version>2.4.1</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/io.springfox/springfox-swagger2 -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>1.5.20</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+    </dependencies>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-maven-plugin</artifactId>
+	</plugin>
+           <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.1.0</version>
+            </plugin>
+             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <configuration>
+                        <testFailureIgnore>true</testFailureIgnore>
+                </configuration>
+           </plugin>
+     	</plugins>
+    </build>
+
+<!--    <build>-->
+<!--        <plugins>-->
+<!--            <plugin>-->
+<!--                <groupId>org.springframework.boot</groupId>-->
+<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
+<!--            </plugin>-->
+<!--            <plugin>-->
+<!--                <groupId>com.google.cloud.tools</groupId>-->
+<!--                <artifactId>jib-maven-plugin</artifactId>-->
+<!--                <version>${jib.maven-plugin-version}</version>-->
+<!--                <configuration>-->
+<!--                    <to>-->
+<!--                        <credHelper>ecr-login</credHelper>-->
+<!--                    </to>-->
+<!--                    <from>-->
+<!--                        <image>${account}.dkr.ecr.ap-northeast-2.amazonaws.com/${ecr-image}@${digest}</image>-->
+<!--                    </from>-->
+<!--                    <container>-->
+<!--                        <jvmFlags>-->
+<!--                            <jvmFlag>-Djava.security.egd=file:/dev/./urandom</jvmFlag>-->
+<!--                        </jvmFlags>-->
+<!--                    </container>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+<!--        </plugins>-->
+<!--    </build>-->
+
+</project>

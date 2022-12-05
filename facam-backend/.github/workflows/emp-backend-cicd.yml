@@ -1,0 +1,112 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: backend emp - CI CD
+#on:
+#  push:
+#    branches: [ main ]
+#  pull_request:
+#    branches: [ main ]
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+      tags:
+        description: 'Test scenario tags'
+
+env:
+  AWS_REGION: ap-northeast-2                   # set this to your preferred AWS region, e.g. us-west-1
+  ECR_REPOSITORY: backend-emp # set this to your Amazon ECR repository name
+  KUBE_NAMESPACE: backend
+
+jobs:
+  mvn-build:
+    name: mvn-build
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 11
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+        cache: maven
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
+
+  ecr-build-push-and-deploy:
+    name: ecr-build-push-and-deploy
+    runs-on: ubuntu-latest
+    needs: mvn-build
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Docker Build and ECR Push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+
+      - name: Get verion
+        id: image
+        run: |
+          VERSION=$(echo ${{ github.sha }} | cut -c1-8)
+          echo VERSION=$VERSION
+          echo "::set-output name=version::$VERSION"
+
+      # kustomize 명령을 가져온다.
+      - name: Setup Kustomize
+        uses: imranismail/setup-kustomize@v1
+
+      - name: Checkout kustomize repository
+        uses: actions/checkout@v2
+        with:
+          # kubernetes 설정정보 저장소
+          repository: kimdragon50/emp-gitops
+          ref: backend-emp
+          # 다른 저장소에 push 하려면 Personal Access Token이 필요.
+          token: ${{ secrets.ACTION_TOKEN }}
+          path: emp-gitops
+      # 새 이미지 버전으로 파일 수정
+      - name: Update Kubernetes resources
+        run: |
+          pwd
+          cd emp-gitops/overlays/prd/
+          echo \${{ steps.login-ecr.outputs.registry }}/\${{ env.ECR_REPOSITORY }}
+          echo \${{ steps.login-ecr.outputs.registry }}/\${{ env.ECR_REPOSITORY }}:\${{ github.sha }}
+          kustomize edit set image \${{ steps.login-ecr.outputs.registry }}/\${{ env.ECR_REPOSITORY }}=\${{ steps.login-ecr.outputs.registry }}/\${{ env.ECR_REPOSITORY }}:\${{ github.sha }}
+          cat kustomization.yaml
+
+      # 수정된 파일 commit & push
+      - name: Commit minifest files
+        run: |
+          cd emp-gitops
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "github-actions"
+          git commit -am "Update image tag"
+          git push -u origin backend-emp
+
+

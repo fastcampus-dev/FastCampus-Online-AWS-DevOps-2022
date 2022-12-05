@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+
+	<!-- log file path -->
+	<property name="LOG_PATH" value="${log.config.path}"/>
+	<!-- log file name -->
+	<property name="LOG_FILE_NAME" value="${log.config.filename}"/>
+	<!-- err log file name -->
+	<property name="ERR_LOG_FILE_NAME" value="err_log"/>
+	<!-- pattern -->
+	<property name="LOG_PATTERN" value="%-5level %d{yy-MM-dd HH:mm:ss}[%thread] [%logger{0}:%line] - %msg%n"/>
+
+
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                ${LOG_PATTERN}
+            </Pattern>
+        </layout>
+    </appender>
+
+    <!--
+    <logger name="org.springframework" level="DEBUG" >
+        <appender-ref ref="stdout"/>
+    </logger>
+    -->
+
+    <logger name="com.kimdragon" level="DEBUG" >
+        <appender-ref ref="stdout"/>
+    </logger>
+
+<!--    <root level="INFO">-->
+<!--        <appender-ref ref="stdout"/>-->
+<!--    </root>-->
+
+</configuration>

@@ -1,0 +1,9 @@
+
+--- 
+- name: Copy html
+  copy: src={{ frontend_src_path }} dest={{ frontend_dest_path }} owner={{default_user}} group={{default_group}} mode=0755
+
+- name: Rename html
+  shell:
+    cmd: |
+      sudo mv /usr/share/nginx/build /usr/share/nginx/html

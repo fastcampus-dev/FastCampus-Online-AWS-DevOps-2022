@@ -1,0 +1,11 @@
+- name: admin user add
+  hosts: "{{ deploy_hosts }}"
+  remote_user: "{{default_user}}"
+  vars_files:
+    - "vars/all.yml"
+
+  roles:
+    - backend
+
+# ansible-playbook deploy_backend.yml -i ./hosts --extra-vars "deploy_hosts=app"
+

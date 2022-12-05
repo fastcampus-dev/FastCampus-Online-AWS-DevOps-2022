@@ -1,0 +1,4 @@
+- name: remove html
+  shell:
+    cmd: |
+      rm -rf /usr/share/nginx/html

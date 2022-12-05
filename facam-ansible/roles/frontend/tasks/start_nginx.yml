@@ -1,0 +1,4 @@
+- name: start nginx
+  shell:
+    cmd: |
+      sudo systemctl start nginx

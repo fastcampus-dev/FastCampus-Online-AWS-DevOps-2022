@@ -1,0 +1,4 @@
+- name: run java
+  shell:
+    cmd: |
+      nohup java -jar /home/ec2-user/employee-management-backend-0.0.1-SNAPSHOT.jar &

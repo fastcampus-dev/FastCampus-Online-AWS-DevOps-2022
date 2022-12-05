@@ -1,0 +1,40 @@
+
+pipeline {
+    agent any
+    stages {
+        stage ('Workspace Clean') {
+            steps {
+             cleanWs()   
+            }
+        }
+        stage ('git clone') {
+            steps {
+                sh  """
+                    echo ${WORKSPACE}
+                    git clone https://github.com/kimdragon50/facam-backend.git 
+                    """
+            }
+        }
+        stage ('Maven Build') {
+            steps {
+                sh  """
+                    cd facam-backend
+                    mvn clean
+                    mvn package 
+                    """
+            }
+        }
+        stage ('Ansible Deploy') {
+            steps {
+                sh  """
+                    git clone https://github.com/kimdragon50/facam-ansible.git 
+                    cd  facam-ansible 
+                    ansible-playbook deploy_backend.yml -i ./hosts/hosts --extra-vars "deploy_hosts=app" 
+                    """
+            }
+        }
+    }
+}
+
+
+

@@ -1,0 +1,3 @@
+
+- name: Copy target jar
+  copy: src={{ backend_src_path }} dest={{ backend_dest_path}} owner={{default_user}} group={{default_group}} mode=0755

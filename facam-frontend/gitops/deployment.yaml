@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frotned-web
+  namespace: frontend
+  labels:
+    app: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-web
+  template:
+    metadata:
+      labels:
+        app: frontend-web
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: nodegroup-type
+                operator: In
+                values:
+                - FRONTEND
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: frotned-web
+          image: 058475846659.dkr.ecr.ap-northeast-2.amazonaws.com/frontend-web
+          ports:
+            - containerPort: 80
+#          resources:
+#            requests:
+#              cpu: "30m"
+#              memory: "64Mi"
+#            limits:
+#              cpu: "50m"
+#              memory: "64Mi"

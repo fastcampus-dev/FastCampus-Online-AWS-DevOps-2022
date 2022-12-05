@@ -1,0 +1,41 @@
+
+pipeline {
+    agent any
+    tools {nodejs "nodejs"}
+    stages {
+        stage ('Workspace Clean') {
+            steps {
+             cleanWs()   
+            }
+        }
+        stage ('git clone') {
+            steps {
+                sh  """
+                    echo ${WORKSPACE}
+                    git clone https://github.com/kimdragon50/facam-frontend.git
+                    """
+            }
+        }
+        stage ('npm build') {
+            steps {
+                sh  """
+                    cd facam-frontend
+                    npm install
+                    npm run build
+                    """
+            }
+        }
+        stage ('Ansible Deploy') {
+            steps {
+                sh  """
+                    git clone https://github.com/kimdragon50/facam-ansible.git 
+                    cd  facam-ansible 
+                    ansible-playbook deploy_frontend.yml -i ./hosts/hosts --extra-vars "deploy_hosts=app" 
+                    """
+            }
+        }
+    }
+}
+
+
+

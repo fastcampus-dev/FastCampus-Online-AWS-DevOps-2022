@@ -1,0 +1,12 @@
+
+- include: remove_html.yml
+  become: true
+
+- include: copy_html.yml
+  become: true
+
+- include: stop_nginx.yml
+  become: true
+
+- include: start_nginx.yml
+  become: true

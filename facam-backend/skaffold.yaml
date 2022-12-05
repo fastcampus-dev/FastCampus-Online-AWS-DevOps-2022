@@ -1,0 +1,20 @@
+apiVersion: skaffold/v2alpha4
+kind: Config
+
+
+profiles:
+  - name: prod
+    build:
+      tagPolicy:
+        envTemplate:
+          template: "{{.VER}}"
+      artifacts:
+        - image: <account_id>.dkr.ecr.ap-northeast-2.amazonaws.com/backend
+          jib:
+            args:
+              - -B
+              - -U
+              - -DskipTests
+              - "-Djib.container.environment=SPRING_PROFILES_ACTIVE=prod"
+              - -Pprod
+
