@@ -107,11 +107,10 @@ module "eks" {
     }
   }
 
-  create_aws_auth_configmap = true
-  manage_aws_auth_configmap = true
-
   # console identity mapping (AWS user)
   # eks configmap aws-auth에 콘솔 사용자 혹은 역할을 등록
+  manage_aws_auth_configmap = true
+
   aws_auth_users = [
     {
       userarn  = "arn:aws:iam::<AWS 어카운트 ID>:user/admin"
