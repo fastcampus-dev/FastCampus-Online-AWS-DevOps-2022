@@ -35,6 +35,10 @@ module "eks" {
   # Cluster Logging Setting
   cluster_enabled_log_types = ["api"]
 
+  tags = {
+      "karpenter.sh/discovery" = local.cluster_name
+    }
+
   # Extend node-to-node security group rules
   node_security_group_additional_rules = {
     ingress_self_all = {
@@ -148,6 +152,13 @@ resource "aws_ec2_tag" "private_subnet_cluster_tag" {
   value       = "owned"
 }
 
+resource "aws_ec2_tag" "private_subnet_karpenter_tag" {
+  for_each    = toset(local.private_subnets)
+  resource_id = each.value
+  key         = "karpenter.sh/discovery/${local.cluster_name}"
+  value       = local.cluster_name
+}
+
 // 퍼블릭 서브넷 태그
 resource "aws_ec2_tag" "public_subnet_tag" {
 for_each    = toset(local.public_subnets)
@@ -161,4 +172,11 @@ for_each    = toset(local.public_subnets)
 resource_id = each.value
 key         = "kubernetes.io/cluster/${local.cluster_name}"
 value       = "owned"
+}
+
+resource "aws_ec2_tag" "public_subnet_karpenter_tag_2" {
+for_each    = toset(local.public_subnets)
+resource_id = each.value
+key         = "karpenter.sh/discovery/${local.cluster_name}"
+value       = local.cluster_name
 }
