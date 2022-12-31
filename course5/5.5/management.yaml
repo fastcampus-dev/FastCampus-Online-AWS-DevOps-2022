@@ -1,0 +1,53 @@
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: management
+spec:
+  taints:
+    - key: management
+      value: "true"
+      effect: NoSchedule
+  labels:
+    nodeType: management-2022
+  requirements:
+    - key: "node.kubernetes.io/instance-type"
+      operator: In
+      values: ["t3.large","t3.xlarge"]
+    - key: "topology.kubernetes.io/zone"
+      operator: In
+      values: [ "ap-northeast-2a", "ap-northeast-2c" ]
+    - key: "karpenter.sh/capacity-type"
+      operator: In
+      values: ["on-demand"]
+  providerRef:
+    name: management-template
+  ttlSecondsAfterEmpty: 30
+---
+apiVersion: karpenter.k8s.aws/v1alpha1
+kind: AWSNodeTemplate
+metadata:
+  name: management-template
+spec:
+  subnetSelector:
+    karpenter.sh/discovery/fast-cluster: '*'
+  securityGroupSelector:
+    aws:eks:cluster-name: "fast-cluster"
+  instanceProfile: KarpenterNodeInstanceProfile-fast-cluster
+  blockDeviceMappings:
+    - deviceName: /dev/xvda
+      ebs:
+        volumeSize: 5Gi
+        volumeType: gp3
+        iops: 3000
+        deleteOnTermination: true
+        throughput: 125
+  tags:
+    service: management
+  userData: |
+    MIME-Version: 1.0
+    Content-Type: multipart/mixed; boundary="BOUNDARY"
+    --BOUNDARY
+    Content-Type: text/x-shellscript; charset="us-ascii"
+    #!/bin/bash
+    echo hello  
+    --BOUNDARY--

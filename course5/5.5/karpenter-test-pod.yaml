@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-karpenter
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      type: karpenter-test
+  template:
+    metadata:
+      name: nginx-karpenter
+      labels:
+        type: karpenter-test
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          imagePullPolicy: IfNotPresent
+      nodeSelector:
+        nodeType: service-2023
+      tolerations:
+        - effect: "NoSchedule"
+          key: "service"
+          operator: "Equal"
+          value: "true"

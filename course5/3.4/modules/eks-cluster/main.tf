@@ -96,6 +96,11 @@ module "eks" {
       iam_role_additional_policies = [
         "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
       ]
+
+      tags = {
+        # This will tag the launch template created for use by Karpenter
+        "karpenter.sh/discovery/${local.cluster_name}" = local.cluster_name
+      }
     }
   }
 
