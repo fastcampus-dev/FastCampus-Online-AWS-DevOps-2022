@@ -8,7 +8,7 @@ spec:
       value: "true"
       effect: NoSchedule
   labels:
-    nodeType: management-2022
+    nodeType: management-2023
   requirements:
     - key: "node.kubernetes.io/instance-type"
       operator: In
@@ -20,34 +20,18 @@ spec:
       operator: In
       values: ["on-demand"]
   providerRef:
-    name: management-template
+    name: management-lt
   ttlSecondsAfterEmpty: 30
+  ttlSecondsUntilExpired: 1209600
 ---
 apiVersion: karpenter.k8s.aws/v1alpha1
 kind: AWSNodeTemplate
 metadata:
-  name: management-template
+  name: management-lt
 spec:
   subnetSelector:
     karpenter.sh/discovery/fast-cluster: '*'
   securityGroupSelector:
-    aws:eks:cluster-name: "fast-cluster"
-  instanceProfile: KarpenterNodeInstanceProfile-fast-cluster
-  blockDeviceMappings:
-    - deviceName: /dev/xvda
-      ebs:
-        volumeSize: 5Gi
-        volumeType: gp3
-        iops: 3000
-        deleteOnTermination: true
-        throughput: 125
+    karpenter.sh/discovery: fast-cluster
   tags:
-    service: management
-  userData: |
-    MIME-Version: 1.0
-    Content-Type: multipart/mixed; boundary="BOUNDARY"
-    --BOUNDARY
-    Content-Type: text/x-shellscript; charset="us-ascii"
-    #!/bin/bash
-    echo hello  
-    --BOUNDARY--
+    karpenter.sh/discovery: fast-cluster
