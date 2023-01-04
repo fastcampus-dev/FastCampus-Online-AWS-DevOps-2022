@@ -32,6 +32,6 @@ spec:
   subnetSelector:
     karpenter.sh/discovery/fast-cluster: '*'
   securityGroupSelector:
-    karpenter.sh/discovery: fast-cluster
+    aws:eks:cluster-name: fast-cluster   # do not change
   tags:
     karpenter.sh/discovery: fast-cluster
