@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: game2048
+  name: game2048
+spec:
+  revisionHistoryLimit: 5
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 0%
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: game2048
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: game2048
+    spec:
+      containers:
+        - name: game2048
+          image: "<AWS ACCOUNT ID>.dkr.ecr.ap-northeast-2.amazonaws.com/<ECR repo명>:latest"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+      nodeSelector:
+        nodeType: service-2023
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: topology.kubernetes.io/zone
+                    operator: In
+                    values:
+                      - "ap-northeast-2a"
+                      - "ap-northeast-2c"
+      tolerations:
+        - key: service
+          operator: "Equal"
+          value: "true"
+          effect: "NoSchedule"
