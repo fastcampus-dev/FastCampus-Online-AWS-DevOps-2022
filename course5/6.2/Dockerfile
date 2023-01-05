@@ -1,19 +1,12 @@
-FROM node:16-slim AS builder
-WORKDIR /usr/src/app
-COPY . .
-RUN npm install --include=dev
-#
-# Build mode can be set via NODE_ENV environment variable (development or production)
-# See project package.json and webpack.config.js
-#
-ENV NODE_ENV=development
-RUN npm run build
-
+# node base image 설치
 FROM node:16-slim
-RUN npm install http-server -g
-RUN mkdir /public
-WORKDIR /public
-COPY --from=builder /usr/src/app/dist/ ./
+# 기본 디렉토리 지정
+WORKDIR /usr/src/app
+# 소스 복사
+COPY . .
+# 패키지 설치
+RUN npm install
+# Listen 포트 정의
 EXPOSE 8080
-USER 1000
-CMD ["http-server"]
+# 서버 기동
+CMD ["npm", "start"]
