@@ -4,7 +4,7 @@ metadata:
   namespace: game2048
   name: game2048
 spec:
-  type: ClusterIp
+  type: ClusterIP
   ports:
     - port: 8080
       targetPort: 8080
