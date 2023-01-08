@@ -1,0 +1,19 @@
+name: automerge
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - labeled
+
+jobs:
+  automerge:
+    if: ${{ github.event.label.name == 'automerge' }}
+    env:
+      BASE_BRANCH: ${{ github.event.pull_request.head.ref }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: automerge
+        uses: "pascalgn/automerge-action@v0.14.2"
+        env:
+          GITHUB_TOKEN: "${{ secrets.ACTION_ACCESS_TOKEN }}"

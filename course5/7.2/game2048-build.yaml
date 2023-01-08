@@ -1,0 +1,86 @@
+name: Build For game-2048
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+
+      - name: Build front
+        run: |
+          npm install
+          npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Get image tag(version)
+        id: image
+        run: |
+          VERSION=$(echo ${{ github.sha }} | cut -c1-5)
+          echo VERSION=$VERSION
+          echo "::set-output name=version::$VERSION"
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: image-info
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: fastc-app
+          IMAGE_TAG: ${{ steps.image.outputs.version }}
+        run: |
+          echo "::set-output name=ecr_repository::$ECR_REPOSITORY"
+          echo "::set-output name=image_tag::$IMAGE_TAG"
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+    outputs:
+      image_tag: ${{ steps.image.outputs.version }}
+      sha: ${{ github.sha }}
+
+  deploy:
+    needs: build
+    name: apply docker image tag to frontend deployment manifest
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_TAG: ${{ needs.build.outputs.image_tag }}
+      GIT_ACCESS_TOKEN: ${{ secrets.ACTION_TOKEN }}
+      HASH: ${{ needs.build.outputs.sha }}
+      GIT_REPO: <github계정명>/fastc-manifest-repo
+
+    steps:
+      - name: Clone Deploy repository
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ env.GIT_REPO }}
+          ref: 'main'
+          token: ${{ env.GIT_ACCESS_TOKEN }}
+
+      - name: Image Tag Change
+        uses: mikefarah/yq@v4.9.6
+        with:
+          cmd: yq e --inplace '.image.tag = "${{ env.IMAGE_TAG }}"' service/game2048/values.yaml
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ env.GIT_ACCESS_TOKEN }}
+          commit-message: 'deploy: game2048-${{ env.HASH }}'
+          base: main
+          branch: game2048-${{ env.HASH }}
+          title: 'deploy: game2048-${{ env.HASH }}'
+          labels: |
+            automerge

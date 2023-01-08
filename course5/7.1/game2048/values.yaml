@@ -1,0 +1,75 @@
+# Default values for game2048.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+appName: "game2048"
+replicaCount: 3
+
+image:
+  repository: <AWS ACCOUNT ID>.dkr.ecr.ap-northeast-2.amazonaws.com/fastc-app
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest0"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+maxSurge: 34%
+maxUnavailable: 0%
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/load-balancer-name: fastc-alb
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    alb.ingress.kubernetes.io/healthcheck-path: /
+    alb.ingress.kubernetes.io/subnets: <public서브넷-1 ID>, <public서브넷-2 ID>
+  ingressRule:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: game2048
+                port:
+                  number: 8080
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector:
+  nodeType: service-2023
+
+tolerations:
+  - key: service
+    operator: "Equal"
+    value: "true"
+    effect: "NoSchedule"
+
+affinity: {}
