@@ -30,7 +30,7 @@ resource "aws_iam_user_policy" "github-action-pol" {
                 "ecr:UploadLayerPart",
                 "ecr:CompleteLayerUpload"
             ],
-            "Resource": "arn:aws:ecr:ap-northeast-2:${data.aws_caller_identity.current.account_id}:repository/fast-app"
+            "Resource": "arn:aws:ecr:ap-northeast-2:${data.aws_caller_identity.current.account_id}:repository/fastc-app"
         },
         {
             "Sid": "GetAuthorizationToken",
