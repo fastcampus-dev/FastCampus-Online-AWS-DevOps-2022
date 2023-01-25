@@ -1,0 +1,18 @@
+{
+    "AWSEBDockerrunVersion": "2",
+    "containerDefinitions": [
+        {
+            "name": "order-app", 
+            "image": "856517815076.dkr.ecr.ap-northeast-2.amazonaws.com/order-app:latest",
+            "hostname": "order-app",
+            "essential": true,
+            "portMappings": [
+                {
+                    "hostPort": 80,
+                    "containerPort": 80
+                }
+            ],
+            "memory": 128
+        }
+    ]
+  }
