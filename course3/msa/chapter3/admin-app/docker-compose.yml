@@ -1,0 +1,12 @@
+version: "3.7"
+
+services:
+  fastapi:
+    image: admin-app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - 8000:8000
+    volumes:
+      - ./app:/code/app
+      - ./templates:/code/templates
+      - ./static:/code/static
