@@ -1,0 +1,17 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 856517815076.dkr.ecr.ap-northeast-2.amazonaws.com 
+  build:
+    commands:
+      - docker build -t order-app:latest .
+      - docker tag order-app:latest 856517815076.dkr.ecr.ap-northeast-2.amazonaws.com/order-app:latest
+  post_build:
+    commands:
+    - docker push 856517815076.dkr.ecr.ap-northeast-2.amazonaws.com/order-app:latest
+
+artifacts:
+  files:
+    - 'Dockerrun.aws.json'

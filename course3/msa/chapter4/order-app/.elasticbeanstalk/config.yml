@@ -1,0 +1,18 @@
+branch-defaults:
+  default:
+    environment: order-app2-dev
+    group_suffix: null
+global:
+  application_name: order-app2
+  branch: null
+  default_ec2_keyname: null
+  default_platform: ECS running on 64bit Amazon Linux 2
+  default_region: ap-northeast-2
+  include_git_submodules: true
+  instance_profile: null
+  platform_name: null
+  platform_version: null
+  profile: null
+  repository: null
+  sc: null
+  workspace_type: Application
